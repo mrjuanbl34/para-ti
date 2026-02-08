@@ -1,0 +1,253 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Para ti ❤️</title>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+<style>
+body{
+    margin:0;
+    min-height:100vh;
+    background:#ffc0cb;
+    background-image:url('PON_AQUI_TU_IMAGEN.jpg');
+    background-size:cover;
+    background-position:center;
+    font-family:'Quicksand', sans-serif;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+}
+
+.card{
+    background:rgba(255,255,255,0.88);
+    padding:35px;
+    border-radius:25px;
+    max-width:600px;
+    width:100%;
+    box-shadow:0 0 25px rgba(255,0,0,0.3);
+    position:relative;
+}
+
+h1{font-family:'Pacifico', cursive;color:#e6005c;}
+p{color:#444;font-size:1.05em;}
+
+button{
+    padding:12px 25px;
+    border:none;
+    border-radius:20px;
+    margin:8px;
+    cursor:pointer;
+    font-size:1em;
+    transition:0.3s;
+}
+
+.btn{background:#ff4d88;color:white;}
+.btn2{background:#ddd;}
+
+/* ===== TARJETAS DE RESPUESTA CON IMÁGENES ===== */
+.answers{
+    display:grid;
+    grid-template-columns: repeat(auto-fit,minmax(140px,1fr));
+    gap:15px;
+    margin-top:20px;
+}
+
+.answer{
+    position:relative;
+    height:140px;
+    border-radius:18px;
+    overflow:hidden;
+    cursor:pointer;
+    transition:0.35s;
+    box-shadow:0 6px 15px rgba(0,0,0,0.2);
+    display:flex;
+    align-items:end;
+    justify-content:center;
+    text-align:center;
+}
+
+.answer::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:rgba(0,0,0,0.35);
+}
+
+.answer span{
+    position:relative;
+    color:white;
+    font-weight:600;
+    padding:8px;
+    z-index:2;
+    font-size:0.95em;
+}
+
+.answer:hover{
+    transform:scale(1.08);
+    z-index:5;
+    box-shadow:0 10px 25px rgba(0,0,0,0.4);
+}
+</style>
+</head>
+<body>
+
+<div class="card" id="app"></div>
+
+<script>
+let puntos = 0;
+let pregunta = 0;
+
+const preguntas = [
+{
+q:"¿Cuál es mi color favorito?",
+ops:["Negro","Turquesa","Verde"],
+ok:[2],
+imgs:["images/negro.jpg","images/turquesa.jpg","images/verde.jpg"]
+},
+{
+q:"¿Cuál es mi superhéroe favorito?",
+ops:["Spiderman","Batman","Tú"],
+ok:[0,2],
+imgs:["images/spiderman.jpg","images/batman.jpg","images/tu.jpg"]
+},
+{
+q:"¿Cuál es mi deporte favorito?",
+ops:["Fútbol","Básquet","Natación"],
+ok:[0],
+imgs:["images/futbol.jpg","images/basket.jpg","images/natacion.jpg"]
+},
+{
+q:"¿Cuál es mi posición favorita en el fútbol?",
+ops:["Portero","Defensa","Delantero"],
+ok:[0],
+imgs:["images/portero.jpg","images/defensa.jpg","images/delantero.jpg"]
+},
+{
+q:"¿Cuál es mi Spider-Man favorito?",
+ops:["Andrew Garfield","Tobey Maguire","Tom Holland"],
+ok:[0,1],
+imgs:["images/andrew.jpg","images/tobey.jpg","images/tom.jpg"]
+},
+{
+q:"¿Cuál es mi película favorita?",
+ops:["Monster House","Wall-E","Spider-Man"],
+ok:[1,2],
+imgs:["images/monsterhouse.jpg","images/walle.jpg","images/spiderman_movie.jpg"]
+},
+{
+q:"¿Cuál es mi serie favorita?",
+ops:["Stranger Things","The Walking Dead","Doctor House"],
+ok:[0,1],
+imgs:["images/stranger.jpg","images/walkingdead.jpg","images/house.jpg"]
+},
+{
+q:"¿Cuándo fue nuestro aniversario?",
+ops:["14 de febrero","12 de enero","5 de enero"],
+ok:[2],
+imgs:["images/feb14.jpg","images/enero12.jpg","images/enero5.jpg"]
+},
+{
+q:"¿Cuál es mi personaje favorito de los videojuegos?",
+ops:["Mario","Sonic","Crash Bandicoot"],
+ok:[2],
+imgs:["images/mario.jpg","images/sonic.jpg","images/crash.jpg"]
+},
+{
+q:"¿Con qué fue hecha esta página web?",
+ops:["HTML","C++","Python"],
+ok:[0],
+imgs:["images/html.png","images/cpp.png","images/python.png"]
+},
+{
+q:"¿Cuál es esa niña bonita de ojos lindos que mide 1.49 y es una mujer espectacular y muy fuerte?",
+ops:["Adriana Pilar Montenegro Toapanta"],
+ok:[0],
+imgs:["adriana.jpg"]
+}
+];
+
+function inicio(){
+    document.getElementById('app').innerHTML=`
+    <h1>Hola, ¿cómo estás, mi niña? 💕</h1>
+    <p>¿Quieres saber por qué te hice esta página web?</p>
+    <p>Contesta correctamente las 10 preguntas y te daré una sorpresa 💖</p>
+    <p><b>Debes tener 10 puntos para desbloquear la siguiente fase ❤️</b></p>
+    <button class='btn' onclick='siguiente()'>Empezar 💖</button>`;
+}
+
+function siguiente(){
+    if(pregunta >= preguntas.length){
+        if(puntos >= 10){
+            faseFinal();
+        }else{
+            document.getElementById('app').innerHTML=`
+            <h1>No alcanzaste los 10 puntos 😢</h1>
+            <p>Puntos: ${puntos}/10</p>
+            <button class='btn' onclick='location.reload()'>Intentar de nuevo</button>`;
+        }
+        return;
+    }
+
+    let p = preguntas[pregunta];
+    let html = `
+    <div style="position:absolute;top:15px;right:20px;
+        background:#ff4d88;color:white;padding:8px 15px;
+        border-radius:20px;font-weight:bold;box-shadow:0 0 10px rgba(0,0,0,0.3)">
+        ${puntos} de 10 puntos
+    </div>
+
+    <h1>${p.q}</h1>
+    <p>Contesta correctamente las 10 preguntas y te daré una sorpresa 💖</p>
+    <div class="answers">`;
+
+    p.ops.forEach((op,i)=>{
+        let img = p.imgs[i];
+        html += `
+        <div class="answer" onclick="responder(${i})"
+        style="background:url('${img}') center/cover no-repeat;">
+            <span>${op}</span>
+        </div>`;
+    });
+
+    html += `</div>`;
+    document.getElementById('app').innerHTML = html;
+}
+
+function responder(i){
+    let p = preguntas[pregunta];
+    if(p.ok.includes(i)){
+        puntos++;
+    }
+    pregunta++;
+    siguiente();
+}
+
+function faseFinal(){
+    document.getElementById('app').innerHTML=`
+    <h1>💖 ¿Quieres ser mi San Valentín? 💖</h1>
+    <button class='btn' id='si' onclick='final()'>Sí</button>
+    <button class='btn2' onclick='no()'>No</button>
+    <p id='msg'></p>`;
+}
+
+let n=0;
+function no(){
+    n++;
+    document.getElementById('si').style.transform = `scale(${1+n*0.2})`;
+    const frases=["Por favor di que sí 🥺","Prometo ser un buen San Valentín 💕","Voy a cuidarte siempre ❤️","Ya sabes la respuesta 😌"];
+    document.getElementById('msg').innerText = frases[Math.min(n-1,3)];
+}
+
+function final(){
+    document.getElementById('app').innerHTML=`
+    <h1>Gracias por ser mi San Valentín 💘</h1>
+    <p>Te amo mucho, mi vida ,gracias por ser mi niña guapa y tener ese lindo brillo todos los dias a pesar de todo hice esta paguina para ti con todo lo que e aprendido del colegio , me esforce para que quedara bonito para ti y gracias por visitar mi paguina guapa</p>`;
+}
+
+inicio();
+</script>
+
+</body>
+</html>
